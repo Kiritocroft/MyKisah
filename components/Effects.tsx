@@ -5,7 +5,7 @@ import { BlendFunction } from "postprocessing";
 
 export default function Effects() {
   return (
-    <EffectComposer disableNormalPass>
+    <EffectComposer enableNormalPass={false}>
       <Bloom 
         luminanceThreshold={0.5} 
         mipmapBlur 

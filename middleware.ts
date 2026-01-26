@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
   if (isLoginPath) {
      const session = request.cookies.get("admin_session");
      if (session) {
-        return NextResponse.redirect(new URL("/admin/photos", request.url));
+        return NextResponse.redirect(new URL("/admin/characters", request.url));
      }
   }
 

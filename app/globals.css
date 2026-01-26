@@ -30,10 +30,15 @@
   --foreground: #f8fafc;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
 }
 
 h1, h2, h3, h4, h5, h6 {

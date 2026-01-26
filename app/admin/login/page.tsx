@@ -17,7 +17,7 @@ export default function LoginPage() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-md p-8 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl"
+        className="relative z-10 w-full max-w-md p-6 sm:p-8 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl mx-4"
       >
         <div className="text-center mb-8">
             <h1 className="text-3xl font-serif text-white mb-2">Admin Portal</h1>

@@ -26,7 +26,7 @@ export default function Home() {
     <main ref={containerRef} className="min-h-screen bg-night-bg relative overflow-x-hidden selection:bg-soft-pink selection:text-slate-900">
       
       {/* Hero Section */}
-      <section className="h-screen w-full relative flex flex-col items-center justify-center overflow-hidden">
+      <section className="h-[100dvh] w-full relative flex flex-col items-center justify-center overflow-hidden">
         {/* 3D Background */}
         <div className="absolute inset-0 z-0">
           <Scene />
@@ -35,14 +35,14 @@ export default function Home() {
         {/* Overlay Content */}
         <motion.div 
             style={{ opacity, scale }}
-            className="z-10 text-center pointer-events-none mt-[-10vh] mix-blend-screen select-none relative"
+            className="z-10 text-center pointer-events-none mt-[-5vh] md:mt-[-10vh] mix-blend-screen select-none relative px-4"
         >
             {/* Decorative Line */}
             <motion.div 
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 1.5, delay: 0.5 }}
-                className="w-px h-24 bg-gradient-to-b from-transparent via-soft-pink to-transparent mx-auto mb-8"
+                className="w-px h-16 md:h-24 bg-gradient-to-b from-transparent via-soft-pink to-transparent mx-auto mb-4 md:mb-8"
             />
 
             <motion.h1 
@@ -53,10 +53,10 @@ export default function Home() {
                     type: "spring",
                     bounce: 0.5
                 }}
-                className={`${fredoka.className} text-7xl md:text-[10rem] text-transparent bg-clip-text bg-gradient-to-b from-[#ff9a9e] via-[#fecfef] to-[#ff9a9e] mb-6 tracking-wide leading-none drop-shadow-[0_5px_5px_rgba(255,105,180,0.5)] stroke-white`}
+                className={`${fredoka.className} text-6xl sm:text-7xl md:text-[10rem] text-transparent bg-clip-text bg-gradient-to-b from-[#ff9a9e] via-[#fecfef] to-[#ff9a9e] mb-4 md:mb-6 tracking-wide leading-none drop-shadow-[0_5px_5px_rgba(255,105,180,0.5)] stroke-white`}
                 style={{
-                    WebkitTextStroke: "3px white",
-                    textShadow: "4px 4px 0px #ff6b6b"
+                    WebkitTextStroke: "2px white",
+                    textShadow: "3px 3px 0px #ff6b6b"
                 }}
             >
                 My Kisah
@@ -66,10 +66,10 @@ export default function Home() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 1 }}
-                className="flex items-center justify-center gap-4"
+                className="flex items-center justify-center gap-2 md:gap-4"
             >
-                <span className="h-px w-12 bg-white/30" />
-                <p className={`${fredoka.className} text-2xl md:text-4xl text-[#ffeb3b] font-bold tracking-wider drop-shadow-md`}
+                <span className="h-px w-8 md:w-12 bg-white/30" />
+                <p className={`${fredoka.className} text-xl sm:text-2xl md:text-4xl text-[#ffeb3b] font-bold tracking-wider drop-shadow-md`}
                    style={{
                        textShadow: "2px 2px 0px #f57f17",
                        WebkitTextStroke: "1px #fff"
@@ -77,7 +77,7 @@ export default function Home() {
                 >
                     Aseli Loh Ya
                 </p>
-                <span className="h-px w-12 bg-white/30" />
+                <span className="h-px w-8 md:w-12 bg-white/30" />
             </motion.div>
         </motion.div>
         
@@ -104,17 +104,17 @@ export default function Home() {
       </section>
 
       {/* Gallery Section */}
-      <section id="gallery" className="min-h-screen py-32 px-4 relative z-10 bg-gradient-to-b from-night-bg via-[#0f172a] to-night-bg">
+      <section id="gallery" className="min-h-screen py-20 md:py-32 px-4 relative z-10 bg-gradient-to-b from-night-bg via-[#0f172a] to-night-bg">
         <div className="max-w-7xl mx-auto">
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-center mb-20"
+                className="text-center mb-12 md:mb-20"
             >
-                <span className="text-soft-pink text-sm uppercase tracking-[0.2em] font-bold mb-4 block">Collection</span>
-                <h2 className="text-5xl md:text-6xl font-serif text-white mb-6">The Sacred Archive</h2>
-                <div className="w-24 h-1 bg-gradient-to-r from-transparent via-deep-pink to-transparent mx-auto rounded-full opacity-70" />
+                <span className="text-soft-pink text-xs md:text-sm uppercase tracking-[0.2em] font-bold mb-2 md:mb-4 block">Collection</span>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white mb-4 md:mb-6">The Sacred Archive</h2>
+                <div className="w-16 md:w-24 h-1 bg-gradient-to-r from-transparent via-deep-pink to-transparent mx-auto rounded-full opacity-70" />
             </motion.div>
             
             <WaifuGallery />

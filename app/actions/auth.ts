@@ -14,7 +14,7 @@ export async function login(prevState: { error?: string } | null, formData: Form
         secure: process.env.NODE_ENV === "production",
         maxAge: 60 * 60 * 24 // 1 day
     });
-    redirect("/admin/photos");
+    redirect("/admin/characters");
   } else {
     return { error: "Invalid password" };
   }
