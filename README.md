@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# My Kisah 🌸
 
-## Getting Started
+A beautiful, interactive personal showcase website built with Next.js, featuring 3D elements, smooth animations, and a comprehensive admin management system.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Live Demo**: [https://my-kisah.vercel.app](https://my-kisah.vercel.app)
+- **Preview Images**: 
+  - ![Home Preview](https://via.placeholder.com/800x400?text=Home+Preview)
+  - ![3D Model Preview](https://via.placeholder.com/800x400?text=3D+Model+Preview)
+  - ![Gallery Preview](https://via.placeholder.com/800x400?text=Gallery+Preview)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🎨 Public Interface
+- **Interactive 3D Model**: Features a 3D model of Kaoruko Waguri with 360° rotation controls and click interactions.
+- **Waifu Gallery**: A curated gallery of favorite characters with "Wholesome" and "Energetic" categories.
+- **Photo Gallery**: Masonry-style photo grid with lightbox view.
+- **Immersive Design**: Dark mode aesthetic with floating sakura particles and candy-style typography (Fredoka font).
+- **Smooth Animations**: Powered by Framer Motion for delightful transitions.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🛠️ Admin Panel (`/admin`)
+- **Secure Authentication**: Session-based login protection.
+- **Photo Management**: Upload, view, and delete photos for the public gallery.
+- **Character Management**: Full CRUD (Create, Read, Update, Delete) operations for the Waifu Gallery.
+- **Dashboard**: Centralized control for website content.
 
-## Learn More
+## 🚀 Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **3D Graphics**: [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) & [Drei](https://github.com/pmndrs/drei)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Font**: [Fredoka](https://fonts.google.com/specimen/Fredoka)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Getting Started
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Prerequisites
+- Node.js installed on your machine.
 
-## Deploy on Vercel
+### Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/my-kisah.git
+   cd my-kisah
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**
+   Create a `.env` file in the root directory to set your admin password:
+   ```env
+   ADMIN_PASSWORD=your_secure_password_here
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open the application**
+   - Public site: [http://localhost:3000](http://localhost:3000)
+   - Admin panel: [http://localhost:3000/admin](http://localhost:3000/admin)
+
+## 📂 Project Structure
+
+- `/app`: Next.js App Router pages and API actions.
+  - `/actions`: Server Actions for Auth, Photos, and Characters.
+  - `/admin`: Admin panel routes and components.
+- `/components`: Reusable UI components (3D Scene, Galleries, UI elements).
+- `/data`: JSON data storage for characters.
+- `/public`: Static assets and uploaded photos.
+
+## 📝 Use It For Fun :3
