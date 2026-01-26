@@ -38,38 +38,27 @@ export default function Home() {
             className="z-10 text-center pointer-events-none mt-[-5vh] md:mt-[-10vh] mix-blend-screen select-none relative px-4"
         >
             {/* Decorative Line */}
-            <motion.div 
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 1.5, delay: 0.5 }}
-                className="w-px h-16 md:h-24 bg-gradient-to-b from-transparent via-soft-pink to-transparent mx-auto mb-4 md:mb-8"
+            <div 
+                className="w-px h-16 md:h-24 bg-gradient-to-b from-transparent via-soft-pink to-transparent mx-auto mb-4 md:mb-8 animate-scale-x scale-x-0"
+                style={{ animationDelay: "0.5s" }}
             />
 
-            <motion.h1 
-                initial={{ opacity: 0, y: 50, scale: 0.5, rotate: -10 }}
-                animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-                transition={{ 
-                    duration: 0.8, 
-                    type: "spring",
-                    bounce: 0.5
-                }}
-                className={`${fredoka.className} text-6xl sm:text-7xl md:text-[10rem] text-transparent bg-clip-text bg-gradient-to-b from-[#ff9a9e] via-[#fecfef] to-[#ff9a9e] mb-4 md:mb-6 tracking-wide leading-none drop-shadow-[0_5px_5px_rgba(255,105,180,0.5)] stroke-white`}
+            <h1 
+                className="font-display text-6xl sm:text-7xl md:text-[10rem] text-transparent bg-clip-text bg-gradient-to-b from-[#ff9a9e] via-[#fecfef] to-[#ff9a9e] mb-4 md:mb-6 tracking-wide leading-none drop-shadow-[0_5px_5px_rgba(255,105,180,0.5)] stroke-white animate-hero-title"
                 style={{
                     WebkitTextStroke: "2px white",
                     textShadow: "3px 3px 0px #ff6b6b"
                 }}
             >
                 My Kisah
-            </motion.h1>
+            </h1>
             
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 1 }}
-                className="flex items-center justify-center gap-2 md:gap-4"
+            <div
+                className="flex items-center justify-center gap-2 md:gap-4 animate-fade-in-up"
+                style={{ animationDelay: "1s" }}
             >
                 <span className="h-px w-8 md:w-12 bg-white/30" />
-                <p className={`${fredoka.className} text-xl sm:text-2xl md:text-4xl text-[#ffeb3b] font-bold tracking-wider drop-shadow-md`}
+                <p className="font-display text-xl sm:text-2xl md:text-4xl text-[#ffeb3b] font-bold tracking-wider drop-shadow-md"
                    style={{
                        textShadow: "2px 2px 0px #f57f17",
                        WebkitTextStroke: "1px #fff"
@@ -78,7 +67,7 @@ export default function Home() {
                     Aseli Loh Ya
                 </p>
                 <span className="h-px w-8 md:w-12 bg-white/30" />
-            </motion.div>
+            </div>
         </motion.div>
         
         {/* Scroll Indicator */}

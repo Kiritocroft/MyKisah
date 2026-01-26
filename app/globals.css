@@ -3,6 +3,7 @@
 @theme {
   --font-serif: var(--font-playfair), serif;
   --font-sans: var(--font-inter), sans-serif;
+  --font-display: var(--font-fredoka), sans-serif;
 
   /* Moonlit Sakura Palette */
   --color-soft-pink: #fbcfe8;
@@ -23,6 +24,47 @@
     from { box-shadow: 0 0 10px -5px var(--color-soft-pink); }
     to { box-shadow: 0 0 20px 5px var(--color-deep-pink); }
   }
+
+  @keyframes title-enter {
+    0% {
+      opacity: 0;
+      transform: translateY(50px) scale(0.5) rotate(-10deg);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1) rotate(0);
+    }
+  }
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-x {
+    0% { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
+  }
+}
+
+.animate-hero-title {
+  animation: title-enter 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 1s ease-out forwards;
+  opacity: 0; /* Start invisible */
+}
+
+.animate-scale-x {
+  animation: scale-x 1.5s ease-out forwards;
+  transform-origin: center;
 }
 
 :root {

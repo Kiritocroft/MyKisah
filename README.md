@@ -7,7 +7,7 @@ A beautiful, interactive personal showcase website built with Next.js, featuring
 - **Live Demo**: [https://my-kisah.vercel.app](https://my-kisah.vercel.app)
 - **Preview Images**: 
   - ![Home Preview](https://via.placeholder.com/800x400?text=Home+Preview)
-  - ![3D Model Preview](https://via.placeholder.com/800x400?text=3D+Model+Preview)
+  - ![Ranking Preview](https://via.placeholder.com/800x400?text=3D+Model+Preview)
   - ![Gallery Preview](https://via.placeholder.com/800x400?text=Gallery+Preview)
 
 
@@ -42,7 +42,7 @@ A beautiful, interactive personal showcase website built with Next.js, featuring
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/my-kisah.git
+   git clone https://github.com/Kiritocroft/MyKisah.git
    cd my-kisah
    ```
 

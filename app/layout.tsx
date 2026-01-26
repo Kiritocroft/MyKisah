@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Playfair_Display, Inter, Fredoka } from "next/font/google";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -12,9 +12,19 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const fredoka = Fredoka({
+  subsets: ["latin"],
+  variable: "--font-fredoka",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "My Kisah - Aseli Loh Ya",
   description: "A digital shrine for Kaoruko Waguri.",
+  icons: {
+    icon: "/assets/Logo.png",
+    apple: "/assets/Logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -25,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playfair.variable} ${inter.variable} antialiased bg-cream text-slate-900`}
+        className={`${playfair.variable} ${inter.variable} ${fredoka.variable} antialiased bg-cream text-slate-900`}
       >
         {children}
       </body>

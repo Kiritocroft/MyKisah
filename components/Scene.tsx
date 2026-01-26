@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls, ContactShadows, Html, Stars } from "@react-three/drei";
+import { Environment, OrbitControls, ContactShadows, Html, Stars, Preload } from "@react-three/drei";
 import { Suspense } from "react";
 import KaorukoModel from "./KaorukoModel";
 import SakuraParticles from "./SakuraParticles";
@@ -23,7 +23,18 @@ function Loader() {
 export default function Scene() {
   return (
     <div className="absolute inset-0 z-0 bg-gradient-to-b from-night-bg via-[#1e1b4b] to-night-bg">
-      <Canvas camera={{ position: [0, 1, 6], fov: 45 }} dpr={[1, 2]} shadows>
+      <Canvas 
+        camera={{ position: [0, 1, 6], fov: 45 }} 
+        dpr={[1, 1.5]} 
+        shadows 
+        performance={{ min: 0.5 }}
+        gl={{ 
+          powerPreference: "high-performance",
+          antialias: false,
+          stencil: false,
+          depth: true
+        }}
+      >
         <Suspense fallback={<Loader />}>
           <fog attach="fog" args={['#020617', 5, 20]} />
           
@@ -38,25 +49,28 @@ export default function Scene() {
             intensity={2} 
             color="#a78bfa" 
             castShadow
+            shadow-bias={-0.0001}
           />
           {/* Rim Light for character */}
           <pointLight position={[-5, 2, -5]} intensity={5} color="#db2777" />
           
-          <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+          <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
           
           {/* Main Content */}
           <KaorukoModel />
           <SakuraParticles />
           <Effects />
           
-          {/* Ground Shadows */}
+          {/* Ground Shadows - Optimized */}
           <ContactShadows 
             position={[0, -1.6, 0]} 
-            opacity={0.7} 
+            opacity={0.6} 
             scale={15} 
-            blur={2.5} 
+            blur={2} 
             far={4} 
-            color="#000" 
+            color="#000"
+            resolution={256}
+            frames={1}
           />
           
           {/* Controls */}
@@ -69,10 +83,14 @@ export default function Scene() {
             maxAzimuthAngle={Infinity}
             minDistance={4}
             maxDistance={8}
-            enableZoom={true}
+            enableZoom={false}
             autoRotate={true}
             autoRotateSpeed={0.5}
+            enableDamping={true}
+            dampingFactor={0.05}
           />
+          
+          <Preload all />
         </Suspense>
       </Canvas>
     </div>

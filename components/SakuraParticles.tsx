@@ -11,7 +11,7 @@ export default function SakuraParticles() {
   const dummy = useMemo(() => new THREE.Object3D(), []);
   
   // Use a ref for particles to avoid re-calculation during render and keep data stable
-  const particlesRef = useRef<{ speed: number; xFactor: number; yFactor: number; zFactor: number; factor: number }[]>([]);
+  const particlesRef = useRef<{ speed: number; xFactor: number; yFactor: number; zFactor: number; factor: number; scale: number }[]>([]);
 
   // Initialize particles once on mount
   useEffect(() => {
@@ -22,7 +22,8 @@ export default function SakuraParticles() {
           const yFactor = (Math.random() - 0.5) * 20 + 5;
           const zFactor = (Math.random() - 0.5) * 20;
           const factor = Math.random() * 10;
-          temp.push({ speed, xFactor, yFactor, zFactor, factor });
+          const scale = 0.1 + Math.random() * 0.05;
+          temp.push({ speed, xFactor, yFactor, zFactor, factor, scale });
       }
       particlesRef.current = temp;
   }, []);
@@ -59,8 +60,8 @@ export default function SakuraParticles() {
           time * 0.2 + particle.factor
       );
       
-      const scale = 0.1 + Math.random() * 0.05;
-      dummy.scale.setScalar(scale);
+      // Use pre-calculated scale
+      dummy.scale.setScalar(particle.scale);
       dummy.updateMatrix();
       
       mesh.current!.setMatrixAt(i, dummy.matrix);

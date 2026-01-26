@@ -11,8 +11,19 @@ export default function KaorukoModel() {
   const [clicked, setClicked] = useState(false);
   const group = useRef<THREE.Group>(null);
   
-  const messages = ["Anjir", "Hehe", "Waduh", "Aseli", "Wangy..."];
-  const [msg, setMsg] = useState("Anjir");
+  const messages = [
+    "Ara ara~ 💕", 
+    "Don't poke me! >///<", 
+    "I'm watching you... 👀", 
+    "Do you like cake? 🍰", 
+    "Rintaro-kun? Is that you?", 
+    "Headpats please! (⁠◕⁠ᴗ⁠◕⁠✿⁠)", 
+    "Stop it, that tickles! hehe", 
+    "My Kisah is real! ✨",
+    "Ehh? Nani? 😲",
+    "You're cute today! 💖"
+  ];
+  const [msg, setMsg] = useState("Ara ara~ 💕");
 
   const handleClick = (e: React.MouseEvent<THREE.Group>) => {
     e.stopPropagation();
