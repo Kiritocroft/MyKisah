@@ -1,32 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Filter, Heart, Sparkles } from "lucide-react";
-
-// Mock Data - In a real app, this would come from an API or CMS
-const WAIFUS = [
-  { id: 1, name: "Kaoruko Waguri", anime: "Kaoru Hana wa Rin to Saku", type: "Wholesome", desc: "The gentle scent of cake and flowers.", image: "✿" },
-  { id: 2, name: "Marin Kitagawa", anime: "Sono Bisque Doll", type: "Energetic", desc: "Cosplay queen with a heart of gold.", image: "🎀" },
-  { id: 3, name: "Yor Forger", anime: "Spy x Family", type: "Cool", desc: "Deadly assassin, clumsy mother.", image: "⚔️" },
-  { id: 4, name: "Hitori Gotoh", anime: "Bocchi the Rock!", type: "Introvert", desc: "Guitar hero in the making.", image: "🎸" },
-  { id: 5, name: "Frieren", anime: "Sousou no Frieren", type: "Cool", desc: "Elf mage on a journey to know humans.", image: "🪄" },
-  { id: 6, name: "Chisato Nishikigi", anime: "Lycoris Recoil", type: "Energetic", desc: "Peacemaker with a gun.", image: "🔫" },
-];
+import { getCharacters, type Character } from "@/app/actions/characters";
 
 const FILTERS = ["All", "Wholesome", "Energetic", "Cool", "Introvert"];
 
 export default function WaifuGallery() {
+  const [waifus, setWaifus] = useState<Character[]>([]);
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [hovered, setHovered] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const filteredWaifus = WAIFUS.filter((waifu) => {
+  useEffect(() => {
+    async function loadData() {
+      const { characters } = await getCharacters();
+      setWaifus(characters);
+      setLoading(false);
+    }
+    loadData();
+  }, []);
+
+  const filteredWaifus = waifus.filter((waifu) => {
     const matchesFilter = filter === "All" || waifu.type === filter;
     const matchesSearch = waifu.name.toLowerCase().includes(search.toLowerCase()) || 
                           waifu.anime.toLowerCase().includes(search.toLowerCase());
     return matchesFilter && matchesSearch;
   });
+
+  if (loading) {
+      return (
+          <div className="flex justify-center py-20">
+              <div className="w-10 h-10 border-4 border-soft-pink border-t-transparent rounded-full animate-spin" />
+          </div>
+      );
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 md:px-8">

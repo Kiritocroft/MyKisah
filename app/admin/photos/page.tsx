@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Upload, Trash2, Image as ImageIcon, X } from "lucide-react";
 import { uploadPhoto, getPhotos, deletePhoto, type Photo } from "@/app/actions/photos";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,20 +12,25 @@ export default function PhotosPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load photos on mount
-  useEffect(() => {
-    loadPhotos();
+  const fetchPhotos = useCallback(async () => {
+    try {
+        const { photos, error } = await getPhotos();
+        if (error) {
+            alert(error);
+        } else {
+            setPhotos(photos);
+        }
+    } catch (err) {
+        console.error("Failed to fetch photos:", err);
+    } finally {
+        setIsLoading(false);
+    }
   }, []);
 
-  async function loadPhotos() {
-    const { photos, error } = await getPhotos();
-    if (error) {
-        alert(error);
-    } else {
-        setPhotos(photos);
-    }
-    setIsLoading(false);
-  }
+  // Load photos on mount
+  useEffect(() => {
+    fetchPhotos();
+  }, [fetchPhotos]);
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -39,7 +44,7 @@ export default function PhotosPage() {
     if (res?.error) {
         alert(res.error);
     } else {
-        await loadPhotos();
+        await fetchPhotos();
     }
     setIsUploading(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -51,7 +56,7 @@ export default function PhotosPage() {
     setDeletingId(fileName);
     const res = await deletePhoto(fileName);
     if (res?.success) {
-        await loadPhotos();
+        await fetchPhotos();
     } else {
         alert("Failed to delete");
     }
@@ -91,7 +96,12 @@ export default function PhotosPage() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {isLoading ? (
+        <div className="flex justify-center py-20">
+            <div className="w-10 h-10 border-4 border-soft-pink border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <AnimatePresence mode="popLayout">
             {photos.map((photo) => (
                 <motion.div

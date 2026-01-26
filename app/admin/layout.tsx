@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Image as ImageIcon, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Image as ImageIcon, Settings, LogOut, Users } from "lucide-react";
 import { logout } from "@/app/actions/auth";
 
 export default function AdminLayout({
@@ -19,7 +19,7 @@ export default function AdminLayout({
 
   const navItems = [
     { name: "Photos", href: "/admin/photos", icon: ImageIcon },
-    // Add more items here if needed
+    { name: "Characters", href: "/admin/characters", icon: Users },
   ];
 
   return (

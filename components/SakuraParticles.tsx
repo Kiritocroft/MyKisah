@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -9,25 +9,28 @@ const PARTICLE_COUNT = 300; // Increased for better atmosphere
 export default function SakuraParticles() {
   const mesh = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
+  
+  // Use a ref for particles to avoid re-calculation during render and keep data stable
+  const particlesRef = useRef<{ speed: number; xFactor: number; yFactor: number; zFactor: number; factor: number }[]>([]);
 
-  // Initialize particles
-  const particles = useMemo(() => {
-    const temp = [];
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const speed = 0.02 + Math.random() / 100;
-      const xFactor = (Math.random() - 0.5) * 20;
-      const yFactor = (Math.random() - 0.5) * 20 + 5;
-      const zFactor = (Math.random() - 0.5) * 20;
-      const factor = Math.random() * 10;
-      temp.push({ speed, xFactor, yFactor, zFactor, factor });
-    }
-    return temp;
+  // Initialize particles once on mount
+  useEffect(() => {
+      const temp = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const speed = 0.02 + Math.random() / 100;
+          const xFactor = (Math.random() - 0.5) * 20;
+          const yFactor = (Math.random() - 0.5) * 20 + 5;
+          const zFactor = (Math.random() - 0.5) * 20;
+          const factor = Math.random() * 10;
+          temp.push({ speed, xFactor, yFactor, zFactor, factor });
+      }
+      particlesRef.current = temp;
   }, []);
 
   useFrame((state) => {
-    if (!mesh.current) return;
+    if (!mesh.current || particlesRef.current.length === 0) return;
 
-    particles.forEach((particle, i) => {
+    particlesRef.current.forEach((particle, i) => {
       // Fall down
       particle.yFactor -= particle.speed * 1.5; 
       

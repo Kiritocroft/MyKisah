@@ -14,7 +14,7 @@ export default function KaorukoModel() {
   const messages = ["Anjir", "Hehe", "Waduh", "Aseli", "Wangy..."];
   const [msg, setMsg] = useState("Anjir");
 
-  const handleClick = (e: any) => {
+  const handleClick = (e: React.MouseEvent<THREE.Group>) => {
     e.stopPropagation();
     
     // Prevent spam clicking to avoid lag

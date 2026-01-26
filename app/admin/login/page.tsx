@@ -50,10 +50,6 @@ export default function LoginPage() {
             {isPending ? "Unlocking..." : "Enter Shrine"}
           </button>
         </form>
-        
-        <div className="mt-8 text-center">
-            <p className="text-xs text-slate-600">hint: admin123</p>
-        </div>
       </motion.div>
     </div>
   );
