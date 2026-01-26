@@ -5,10 +5,9 @@ import { redirect } from "next/navigation";
 
 export async function login(prevState: { error?: string } | null, formData: FormData) {
   const password = formData.get("password");
+  const correctPassword = process.env.ADMIN_PASSWORD;
 
-  // Hardcoded password for demo purposes
-  // In a real app, use environment variables or database
-  if (password === "admin123") {
+  if (password === correctPassword && correctPassword) {
     const cookieStore = await cookies();
     cookieStore.set("admin_session", "true", { 
         httpOnly: true, 
