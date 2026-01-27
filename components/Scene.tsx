@@ -21,21 +21,24 @@ function Loader() {
   );
 }
 
-export default function Scene() {
+export default function Scene({ onCharacterClick }: { onCharacterClick?: (msg: string) => void }) {
   return (
-    <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-[#020617] to-black">
-      <Canvas 
-        camera={{ position: [0, 1, 6], fov: 45 }} 
-        dpr={[1, 1.5]} 
-        shadows 
-        performance={{ min: 0.5 }}
-        gl={{ 
-          powerPreference: "high-performance",
-          antialias: false,
-          stencil: false,
-          depth: true
-        }}
-      >
+    <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-[#020617] to-black pointer-events-none">
+      <div className="absolute inset-0 pointer-events-auto">
+        <Canvas 
+          camera={{ position: [0, 1, 6], fov: 45 }} 
+          dpr={[1, 1.2]} 
+          shadows={false}
+          performance={{ min: 0.5 }}
+          frameloop="always"
+          gl={{ 
+            powerPreference: "high-performance",
+            antialias: false,
+            stencil: false,
+            depth: true,
+            preserveDrawingBuffer: false
+          }}
+        >
         <Suspense fallback={<Loader />}>
           {/* Fog adjusted to allow seeing stars and distant particles */}
           <fog attach="fog" args={['#020617', 10, 100]} />
@@ -59,7 +62,7 @@ export default function Scene() {
           <CosmicField />
           
           {/* Main Content */}
-          <KaorukoModel />
+          <KaorukoModel onCharacterClick={onCharacterClick} />
           <SakuraParticles />
           <Effects />
           
@@ -95,6 +98,7 @@ export default function Scene() {
           <Preload all />
         </Suspense>
       </Canvas>
+      </div>
     </div>
   );
 }
