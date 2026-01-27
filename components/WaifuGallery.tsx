@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useDeferredValue, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Filter, Crown, Sparkles } from "lucide-react";
-import { getCharacters, type Character } from "@/app/actions/characters";
 import WaifuCard from "./WaifuCard";
 
 const FILTERS = ["All", "Wholesome", "Energetic", "Cool", "Introvert"];
