@@ -7,7 +7,7 @@ A beautiful, interactive personal showcase website built with **Next.js 16** and
 <!-- Ganti link gambar di bawah ini dengan URL screenshot aplikasi Anda -->
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x450?text=Home+Page+Preview" alt="Home Page" width="100%" />
+  <img src="https://imgur.com/NIMprFK" alt="Home Page" width="100%" />
   <br>
   <em>Interactive 3D Landing Page</em>
 </div>
@@ -15,7 +15,7 @@ A beautiful, interactive personal showcase website built with **Next.js 16** and
 <br>
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x450?text=Admin+Panel+Preview" alt="Waifu Gallery" width="100%" />
+  <img src="https://imgur.com/NMhFHjW" alt="Waifu Gallery" width="100%" />
   <br>
   <em>Waifu Gallery</em>
 </div>
