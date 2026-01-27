@@ -1,5 +1,4 @@
 import Scene from "@/components/Scene";
-import NoiseOverlay from "@/components/ui/NoiseOverlay";
 import WaifuGallery from "@/components/WaifuGallery";
 import { getCharacters } from "@/app/actions/characters";
 import { Fredoka } from "next/font/google";
@@ -14,8 +13,7 @@ export default async function Home() {
   const { characters } = await getCharacters();
 
   return (
-    <main className="min-h-screen bg-night-bg relative overflow-x-hidden selection:bg-soft-pink selection:text-slate-900 animate-aurora">
-      <NoiseOverlay />
+    <main className="min-h-screen bg-night-bg relative overflow-x-hidden selection:bg-soft-pink selection:text-slate-900">
       
       {/* Hero Section */}
       <section className="h-[100dvh] w-full relative flex flex-col items-center justify-center overflow-hidden">

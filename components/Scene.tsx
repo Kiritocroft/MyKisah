@@ -1,11 +1,12 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls, ContactShadows, Html, Stars, Preload } from "@react-three/drei";
+import { Environment, OrbitControls, ContactShadows, Html, Preload } from "@react-three/drei";
 import { Suspense } from "react";
 import KaorukoModel from "./KaorukoModel";
 import SakuraParticles from "./SakuraParticles";
 import Effects from "./Effects";
+import CosmicField from "./CosmicField";
 
 function Loader() {
   return (
@@ -22,7 +23,7 @@ function Loader() {
 
 export default function Scene() {
   return (
-    <div className="absolute inset-0 z-0 bg-gradient-to-b from-night-bg via-[#1e1b4b] to-night-bg">
+    <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-[#020617] to-black">
       <Canvas 
         camera={{ position: [0, 1, 6], fov: 45 }} 
         dpr={[1, 1.5]} 
@@ -36,7 +37,8 @@ export default function Scene() {
         }}
       >
         <Suspense fallback={<Loader />}>
-          <fog attach="fog" args={['#020617', 5, 20]} />
+          {/* Fog adjusted to allow seeing stars and distant particles */}
+          <fog attach="fog" args={['#020617', 10, 100]} />
           
           {/* Environment & Lighting */}
           <Environment preset="night" blur={0.8} background={false} />
@@ -54,7 +56,7 @@ export default function Scene() {
           {/* Rim Light for character */}
           <pointLight position={[-5, 2, -5]} intensity={5} color="#db2777" />
           
-          <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
+          <CosmicField />
           
           {/* Main Content */}
           <KaorukoModel />
