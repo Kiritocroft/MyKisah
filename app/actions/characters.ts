@@ -4,19 +4,10 @@ import fs from "fs/promises";
 import path from "path";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
+import { type Character } from "@/types";
 
 const DATA_FILE = path.join(process.cwd(), "data", "characters.json");
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "characters");
-
-export interface Character {
-  id: number;
-  name: string;
-  anime: string;
-  type: string;
-  desc: string;
-  image: string;
-  rank?: number; // 1, 2, 3, or undefined/null
-}
 
 async function ensureDataFile() {
   try {
@@ -61,6 +52,7 @@ export async function saveCharacter(formData: FormData) {
     const type = formData.get("type") as string;
     const desc = formData.get("desc") as string;
     const rank = formData.get("rank") ? parseInt(formData.get("rank") as string) : undefined;
+    const objectPosition = formData.get("objectPosition") as string || "center center";
     const imageFile = formData.get("image") as File | null;
     
     let imagePath = formData.get("existingImage") as string || "✿"; // Default fallback
@@ -79,10 +71,36 @@ export async function saveCharacter(formData: FormData) {
         type,
         desc,
         image: imagePath,
-        rank: rank || undefined
+        rank: rank || undefined,
+        objectPosition
     };
 
+    let deletedOldImage = false;
+
     if (id) {
+      // Check for old image deletion if we are updating and have a new image
+      const existingChar = characters.find(c => c.id === id);
+      if (existingChar && imageFile && imageFile.size > 0) {
+         // User is uploading a new image (e.g. cropped result)
+         // Check if old image is a local upload
+         if (existingChar.image && existingChar.image.startsWith("/uploads/characters/")) {
+             try {
+                 const oldFilePath = path.join(process.cwd(), "public", existingChar.image);
+                 // Verify file exists before deleting to avoid error spam
+                 try {
+                    await fs.access(oldFilePath);
+                    await fs.unlink(oldFilePath);
+                    console.log(`[File Deletion] Old image deleted successfully: ${existingChar.image} for Character ID: ${id}`);
+                    deletedOldImage = true;
+                 } catch (accessErr) {
+                    console.log(`[File Deletion] File not found or not accessible: ${existingChar.image}`);
+                 }
+             } catch (e) {
+                 console.error(`[File Deletion Error] Failed to delete ${existingChar.image}:`, e);
+             }
+         }
+      }
+
       // Update existing
       characters = characters.map((c) => (c.id === id ? { ...c, ...characterData, id } : c));
     } else {
@@ -94,7 +112,7 @@ export async function saveCharacter(formData: FormData) {
     await fs.writeFile(DATA_FILE, JSON.stringify(characters, null, 2), "utf-8");
     revalidatePath("/");
     revalidatePath("/admin/characters");
-    return { success: true };
+    return { success: true, deletedOldImage };
   } catch (error) {
     console.error("Error saving character:", error);
     return { error: "Failed to save character" };

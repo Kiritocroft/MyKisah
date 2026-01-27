@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Image as ImageIcon, Settings, LogOut, Users, Menu, X } from "lucide-react";
+import { LogOut, Users, Menu, X } from "lucide-react";
 import { logout } from "@/app/actions/auth";
 import { useState } from "react";
 

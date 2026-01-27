@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter, Fredoka } from "next/font/google";
 import "./globals.css";
+import { ToastProvider } from "@/components/ui/Toast";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -37,7 +38,7 @@ export default function RootLayout({
       <body
         className={`${playfair.variable} ${inter.variable} ${fredoka.variable} antialiased bg-cream text-slate-900`}
       >
-        {children}
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );

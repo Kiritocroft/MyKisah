@@ -1,9 +1,7 @@
-"use client";
-
 import Scene from "@/components/Scene";
+import NoiseOverlay from "@/components/ui/NoiseOverlay";
 import WaifuGallery from "@/components/WaifuGallery";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { getCharacters } from "@/app/actions/characters";
 import { Fredoka } from "next/font/google";
 
 const fredoka = Fredoka({ 
@@ -12,18 +10,12 @@ const fredoka = Fredoka({
   display: "swap"
 });
 
-export default function Home() {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.8]);
+export default async function Home() {
+  const { characters } = await getCharacters();
 
   return (
-    <main ref={containerRef} className="min-h-screen bg-night-bg relative overflow-x-hidden selection:bg-soft-pink selection:text-slate-900">
+    <main className="min-h-screen bg-night-bg relative overflow-x-hidden selection:bg-soft-pink selection:text-slate-900 animate-aurora">
+      <NoiseOverlay />
       
       {/* Hero Section */}
       <section className="h-[100dvh] w-full relative flex flex-col items-center justify-center overflow-hidden">
@@ -33,8 +25,7 @@ export default function Home() {
         </div>
         
         {/* Overlay Content */}
-        <motion.div 
-            style={{ opacity, scale }}
+        <div 
             className="z-10 text-center pointer-events-none mt-[-5vh] md:mt-[-10vh] mix-blend-screen select-none relative px-4"
         >
             {/* Decorative Line */}
@@ -68,18 +59,12 @@ export default function Home() {
                 </p>
                 <span className="h-px w-8 md:w-12 bg-white/30" />
             </div>
-        </motion.div>
+        </div>
         
         {/* Scroll Indicator */}
-        <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2, duration: 1 }}
+        <a 
+            href="#gallery"
             className="absolute bottom-12 z-10 animate-bounce pointer-events-auto cursor-pointer group"
-            onClick={() => {
-                const gallery = document.getElementById('gallery');
-                gallery?.scrollIntoView({ behavior: 'smooth' });
-            }}
         >
             <div className="flex flex-col items-center gap-3">
                 <span className="text-[10px] uppercase tracking-[0.3em] font-sans text-slate-400 group-hover:text-soft-pink transition-colors">
@@ -89,27 +74,12 @@ export default function Home() {
                     <div className="w-1 h-2 bg-slate-400 rounded-full animate-scroll group-hover:bg-soft-pink" />
                 </div>
             </div>
-        </motion.div>
+        </a>
       </section>
 
       {/* Gallery Section */}
-      <section id="gallery" className="min-h-screen py-20 md:py-32 px-4 relative z-10 bg-gradient-to-b from-night-bg via-[#0f172a] to-night-bg">
-        <div className="max-w-7xl mx-auto">
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-center mb-12 md:mb-20"
-            >
-                <span className="text-soft-pink text-xs md:text-sm uppercase tracking-[0.2em] font-bold mb-2 md:mb-4 block">Collection</span>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white mb-4 md:mb-6">The Sacred Archive</h2>
-                <div className="w-16 md:w-24 h-1 bg-gradient-to-r from-transparent via-deep-pink to-transparent mx-auto rounded-full opacity-70" />
-            </motion.div>
-            
-            <WaifuGallery />
-        </div>
-      </section>
-      
+      <WaifuGallery initialCharacters={characters} />
+
       {/* Footer */}
       <footer className="py-12 border-t border-white/5 bg-black/40 backdrop-blur-lg text-center relative z-10">
         <div className="flex flex-col items-center gap-4">

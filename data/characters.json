@@ -5,8 +5,9 @@
     "anime": "Kaoru Hana wa Rin to Saku",
     "type": "Wholesome",
     "desc": "The gentle scent of cake and flowers.",
-    "image": "/uploads/characters/32b7e459-9d57-42d3-81f9-f3e3159d11db.png",
-    "rank": 3
+    "image": "/uploads/characters/3cdf39c1-170b-4f11-b9f3-a1bef6632bcb.png",
+    "rank": 3,
+    "objectPosition": "48% 50%"
   },
   {
     "id": 2,
@@ -14,7 +15,8 @@
     "anime": "Sono Bisque Doll",
     "type": "Energetic",
     "desc": "Cosplay queen with a heart of gold.",
-    "image": "/uploads/characters/4e721155-4817-427c-a62a-0054ab3de249.jpg"
+    "image": "/uploads/characters/eb970567-77eb-4d97-98db-3fa1f0e3a459.jpg",
+    "objectPosition": "center center"
   },
   {
     "id": 3,
@@ -54,7 +56,8 @@
     "type": "Cool",
     "desc": "Haimiya-Senpai is Cutie Scary ",
     "image": "/uploads/characters/9bd8bed9-38bd-4d1f-9d1a-9f1d787f9b1e.jpg",
-    "id": 7
+    "id": 7,
+    "objectPosition": "52% 28%"
   },
   {
     "name": "Miku Nakano",
@@ -69,9 +72,10 @@
     "anime": "Sword Art Online",
     "type": "Wholesome",
     "desc": "The Flash of the Knights of the Blood, leading with grace and unwavering love",
-    "image": "/uploads/characters/fafb7805-f1fc-4385-b0b2-1c24bed14f10.jpg",
+    "image": "/uploads/characters/f4ac8218-0f66-42ba-8502-b7b4caffdcd2.jpg",
     "id": 9,
-    "rank": 1
+    "rank": 1,
+    "objectPosition": "center center"
   },
   {
     "name": "Zero Two",

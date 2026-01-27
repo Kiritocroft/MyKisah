@@ -1,10 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { getCharacters, saveCharacter, deleteCharacter, type Character } from "@/app/actions/characters";
-import { Trash2, Edit2, Plus, Upload, X } from "lucide-react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import ImageAdvancedEditor from "@/components/ImageAdvancedEditor";
+import { getCharacters, saveCharacter, deleteCharacter } from "@/app/actions/characters";
+import { type Character } from "@/types";
+import { Trash2, Edit2, Plus, Upload, X, AlertCircle, Crop as CropIcon } from "lucide-react";
+import { useToast } from "@/components/ui/Toast";
 
 export default function AdminCharactersPage() {
+  const router = useRouter();
+  const { showToast } = useToast();
   const [characters, setCharacters] = useState<Character[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,24 +22,90 @@ export default function AdminCharactersPage() {
   const [type, setType] = useState("Wholesome");
   const [desc, setDesc] = useState("");
   const [rank, setRank] = useState<string>(""); // "" means no rank
+  const [objectPosition, setObjectPosition] = useState("center center");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [existingImage, setExistingImage] = useState("");
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/immutability
-    loadCharacters();
-  }, []);
+  // Cropping state
+  const [isCropping, setIsCropping] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
+  
+  // Validation state
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  async function loadCharacters() {
+  const imagePreview = useMemo(() => {
+    if (imageFile) {
+      return URL.createObjectURL(imageFile);
+    }
+    return existingImage;
+  }, [imageFile, existingImage]);
+
+  const loadCharacters = useCallback(async () => {
     setIsLoading(true);
     const { characters, error } = await getCharacters();
     if (!error) {
       setCharacters(characters);
+    } else {
+      showToast("Failed to load characters", "error");
     }
     setIsLoading(false);
+  }, [showToast]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadCharacters();
+  }, [loadCharacters]);
+
+  const showCroppedImage = useCallback((file: File) => {
+    setImageFile(file);
+    setIsCropping(false);
+    setCropImageSrc(null);
+    showToast("Gambar berhasil dicrop", "success");
+  }, [showToast]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        setCropImageSrc(reader.result?.toString() || "");
+        setIsCropping(true);
+      });
+      reader.readAsDataURL(file);
+      if (errors.image) setErrors({...errors, image: ""});
+    }
+  };
+
+  const cancelCrop = () => {
+    setIsCropping(false);
+    setCropImageSrc(null);
+    // If we were uploading a new file but cancelled, we might want to reset imageFile if it wasn't set yet?
+    // Or just leave it as is (previous state).
+    // For now, let's just close the cropper.
+    // If the user wants to revert to existing image, they can close the modal or re-upload.
+  };
+
+  function validateForm() {
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim()) newErrors.name = "Name is required";
+    else if (name.length < 2) newErrors.name = "Name must be at least 2 characters";
+
+    if (!anime.trim()) newErrors.anime = "Anime source is required";
+    
+    if (!desc.trim()) newErrors.desc = "Description is required";
+    else if (desc.length < 10) newErrors.desc = "Description must be at least 10 characters";
+
+    if (!existingImage && !imageFile) {
+      newErrors.image = "An image is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   }
 
   function handleOpenModal(character?: Character) {
+    setErrors({});
     if (character) {
       setEditingCharacter(character);
       setName(character.name);
@@ -41,6 +113,7 @@ export default function AdminCharactersPage() {
       setType(character.type);
       setDesc(character.desc);
       setRank(character.rank ? character.rank.toString() : "");
+      setObjectPosition(character.objectPosition || "center center");
       setExistingImage(character.image);
     } else {
       setEditingCharacter(null);
@@ -49,6 +122,7 @@ export default function AdminCharactersPage() {
       setType("Wholesome");
       setDesc("");
       setRank("");
+      setObjectPosition("center center");
       setExistingImage("");
     }
     setImageFile(null);
@@ -57,6 +131,12 @@ export default function AdminCharactersPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      showToast("Please fix the errors in the form", "error");
+      return;
+    }
+
     const formData = new FormData();
     if (editingCharacter) {
       formData.append("id", editingCharacter.id.toString());
@@ -68,17 +148,32 @@ export default function AdminCharactersPage() {
     if (rank) {
       formData.append("rank", rank);
     }
+    formData.append("objectPosition", objectPosition);
     if (imageFile) {
       formData.append("image", imageFile);
     }
     formData.append("existingImage", existingImage);
 
-    const result = await saveCharacter(formData);
-    if (result.success) {
-      setIsModalOpen(false);
-      loadCharacters();
-    } else {
-      alert("Failed to save character");
+    try {
+      const result = await saveCharacter(formData);
+      if (result.success) {
+        setIsModalOpen(false);
+        showToast(editingCharacter ? "Character updated successfully" : "Character created successfully", "success");
+        
+        // Show visual confirmation for auto-deletion
+        if (result.deletedOldImage) {
+           setTimeout(() => {
+               showToast("Previous photo deleted to save space", "success");
+           }, 800);
+        }
+
+        loadCharacters();
+        router.refresh(); // Update server components
+      } else {
+        showToast("Failed to save character", "error");
+      }
+    } catch {
+      showToast("An unexpected error occurred", "error");
     }
   }
 
@@ -86,9 +181,11 @@ export default function AdminCharactersPage() {
     if (confirm("Are you sure you want to delete this character?")) {
       const result = await deleteCharacter(id);
       if (result.success) {
+        showToast("Character deleted successfully", "success");
         loadCharacters();
+        router.refresh();
       } else {
-        alert("Failed to delete character");
+        showToast("Failed to delete character", "error");
       }
     }
   }
@@ -119,7 +216,12 @@ export default function AdminCharactersPage() {
               <div key={char.id} className="bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden group hover:border-soft-pink/50 transition-colors">
                 <div className="h-48 bg-slate-800 relative flex items-center justify-center overflow-hidden">
                    {char.image.startsWith("/") || char.image.startsWith("http") ? (
-                      <img src={char.image} alt={char.name} className="w-full h-full object-cover" />
+                      <img 
+                        src={char.image} 
+                        alt={char.name}
+                        className="w-full h-full object-cover"
+                        style={{ objectPosition: char.objectPosition || "center center" }}
+                      />
                    ) : (
                       <span className="text-6xl">{char.image}</span>
                    )}
@@ -172,10 +274,13 @@ export default function AdminCharactersPage() {
                   <input
                     type="text"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-soft-pink"
-                    required
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      if (errors.name) setErrors({...errors, name: ""});
+                    }}
+                    className={`w-full bg-slate-800 border rounded-lg px-4 py-2 focus:outline-none focus:border-soft-pink ${errors.name ? 'border-red-500' : 'border-slate-700'}`}
                   />
+                  {errors.name && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle size={12} /> {errors.name}</p>}
                 </div>
 
                 <div>
@@ -183,10 +288,13 @@ export default function AdminCharactersPage() {
                   <input
                     type="text"
                     value={anime}
-                    onChange={(e) => setAnime(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-soft-pink"
-                    required
+                    onChange={(e) => {
+                      setAnime(e.target.value);
+                      if (errors.anime) setErrors({...errors, anime: ""});
+                    }}
+                    className={`w-full bg-slate-800 border rounded-lg px-4 py-2 focus:outline-none focus:border-soft-pink ${errors.anime ? 'border-red-500' : 'border-slate-700'}`}
                   />
+                  {errors.anime && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle size={12} /> {errors.anime}</p>}
                 </div>
 
                 <div>
@@ -221,10 +329,13 @@ export default function AdminCharactersPage() {
                   <label className="block text-sm text-slate-400 mb-1">Description</label>
                   <textarea
                     value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-soft-pink h-24"
-                    required
+                    onChange={(e) => {
+                      setDesc(e.target.value);
+                      if (errors.desc) setErrors({...errors, desc: ""});
+                    }}
+                    className={`w-full bg-slate-800 border rounded-lg px-4 py-2 focus:outline-none focus:border-soft-pink h-24 ${errors.desc ? 'border-red-500' : 'border-slate-700'}`}
                   />
+                  {errors.desc && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle size={12} /> {errors.desc}</p>}
                 </div>
 
                 <div>
@@ -233,14 +344,14 @@ export default function AdminCharactersPage() {
                     {existingImage && !imageFile && (
                         <div className="w-16 h-16 bg-slate-800 rounded-lg flex items-center justify-center overflow-hidden border border-slate-700">
                             {existingImage.startsWith("/") ? (
-                                <img src={existingImage} className="w-full h-full object-cover" />
+                                <img src={existingImage} alt="Existing" className="w-full h-full object-cover" />
                             ) : (
                                 <span className="text-2xl">{existingImage}</span>
                             )}
                         </div>
                     )}
                     <label className="flex-1 cursor-pointer">
-                        <div className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 border-dashed rounded-lg p-4 transition-colors">
+                        <div className={`flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-dashed rounded-lg p-4 transition-colors ${errors.image ? 'border-red-500' : 'border-slate-700'}`}>
                             <Upload size={20} className="text-slate-400" />
                             <span className="text-sm text-slate-400">
                                 {imageFile ? imageFile.name : "Upload new image"}
@@ -250,11 +361,43 @@ export default function AdminCharactersPage() {
                             type="file" 
                             accept="image/*" 
                             className="hidden" 
-                            onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                            onChange={handleFileChange}
                         />
                     </label>
                   </div>
+                  {errors.image && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle size={12} /> {errors.image}</p>}
                 </div>
+
+                {imagePreview && (
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Preview & Crop</label>
+                    <div className="flex flex-col gap-3">
+                        <div className="relative w-full aspect-[3/4] bg-slate-800 rounded-lg overflow-hidden border border-slate-700 group">
+                           <img 
+                             src={imagePreview} 
+                             alt="Preview"
+                             className="w-full h-full object-cover"
+                             style={{ objectPosition }}
+                           />
+                           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (imagePreview) {
+                                    setCropImageSrc(imagePreview);
+                                    setIsCropping(true);
+                                  }
+                                }}
+                                className="flex items-center gap-2 px-4 py-2 bg-soft-pink text-slate-900 rounded-lg font-bold hover:bg-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-200"
+                              >
+                                <CropIcon size={18} />
+                                Crop Image
+                              </button>
+                           </div>
+                        </div>
+                    </div>
+                  </div>
+                )}
 
                 <button
                   type="submit"
@@ -265,6 +408,15 @@ export default function AdminCharactersPage() {
               </form>
             </div>
           </div>
+        )}
+
+        {/* Advanced Image Editor Modal */}
+        {isCropping && cropImageSrc && (
+          <ImageAdvancedEditor
+            imageSrc={cropImageSrc}
+            onCancel={cancelCrop}
+            onSave={showCroppedImage}
+          />
         )}
       </div>
     </div>

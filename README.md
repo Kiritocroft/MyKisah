@@ -1,42 +1,56 @@
 # My Kisah 🌸
 
-A beautiful, interactive personal showcase website built with Next.js, featuring 3D elements, smooth animations, and a comprehensive admin management system.
+A beautiful, interactive personal showcase website built with **Next.js 16** and **React 19**, featuring 3D elements, smooth animations, and a comprehensive admin management system with advanced image editing capabilities.
+
+## 📸 Preview
+
+<!-- Ganti link gambar di bawah ini dengan URL screenshot aplikasi Anda -->
+
+<div align="center">
+  <img src="https://via.placeholder.com/800x450?text=Home+Page+Preview" alt="Home Page" width="100%" />
+  <br>
+  <em>Interactive 3D Landing Page</em>
+</div>
+
+<br>
+
+<div align="center">
+  <img src="https://via.placeholder.com/800x450?text=Admin+Panel+Preview" alt="Waifu Gallery" width="100%" />
+  <br>
+  <em>Waifu Gallery</em>
+</div>
 
 ## ✨ Features
 
-- **Live Demo**: [https://my-kisah.vercel.app](https://my-kisah.vercel.app)
-- **Preview Images**: 
-  - ![Home Preview](https://via.placeholder.com/800x400?text=Home+Preview)
-  - ![Ranking Preview](https://via.placeholder.com/800x400?text=3D+Model+Preview)
-  - ![Gallery Preview](https://via.placeholder.com/800x400?text=Gallery+Preview)
-
-
 ### 🎨 Public Interface
-- **Interactive 3D Model**: Features a 3D model of Kaoruko Waguri with 360° rotation controls and click interactions.
-- **Waifu Gallery**: A curated gallery of favorite characters with "Wholesome" and "Energetic" categories.
-- **Photo Gallery**: Masonry-style photo grid with lightbox view.
-- **Immersive Design**: Dark mode aesthetic with floating sakura particles and candy-style typography (Fredoka font).
-- **Smooth Animations**: Powered by Framer Motion for delightful transitions.
+- **Interactive 3D Model**: Features a stunning 3D model with 360° rotation controls and interactions, powered by React Three Fiber.
+- **Hall of Fame**: A podium-style showcase for top-ranked characters with a symmetric, premium layout.
+- **Waifu Gallery**: A dynamic, filterable gallery of characters with categories like "Wholesome" and "Energetic".
+- **Immersive Design**: Dark mode aesthetic with floating sakura particles, glassmorphism effects, and custom typography.
+- **Smooth Animations**: Powered by Framer Motion for delightful page transitions and scroll reveals.
 
-### 🛠️ Admin Panel (`/admin`)
-- **Secure Authentication**: Session-based login protection.
-- **Photo Management**: Upload, view, and delete photos for the public gallery.
-- **Character Management**: Full CRUD (Create, Read, Update, Delete) operations for the Waifu Gallery.
-- **Dashboard**: Centralized control for website content.
+### 🛠️ Admin Panel
+- **Secure Authentication**: Session-based login protection for administrative access.
+- **Character Management**: Full CRUD operations for the character gallery.
+- **Advanced Image Editor**: 
+  - Integrated cropping tool with zoom, rotation, and aspect ratio controls.
+  - **Auto-Cleanup**: Automatically deletes old, unused character images from the server to optimize storage.
+- **Real-time Feedback**: Toast notifications for actions like saving, deleting, and error handling.
 
 ## 🚀 Tech Stack
 
-- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Core**: [React 19](https://react.dev/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
 - **3D Graphics**: [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) & [Drei](https://github.com/pmndrs/drei)
 - **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Font**: [Fredoka](https://fonts.google.com/specimen/Fredoka)
+- **Image Processing**: [React Easy Crop](https://github.com/ricardo-ch/react-easy-crop)
 - **Icons**: [Lucide React](https://lucide.dev/)
 
 ## 🛠️ Getting Started
 
 ### Prerequisites
-- Node.js installed on your machine.
+- Node.js (v18 or higher recommended) installed on your machine.
 
 ### Installation
 
@@ -68,11 +82,27 @@ A beautiful, interactive personal showcase website built with Next.js, featuring
 
 ## 📂 Project Structure
 
-- `/app`: Next.js App Router pages and API actions.
-  - `/actions`: Server Actions for Auth, Photos, and Characters.
-  - `/admin`: Admin panel routes and components.
-- `/components`: Reusable UI components (3D Scene, Galleries, UI elements).
-- `/data`: JSON data storage for characters.
-- `/public`: Static assets and uploaded photos.
+```
+/app
+  ├── /actions       # Server Actions for Auth and Data mutations
+  ├── /admin         # Protected Admin panel routes
+  │   ├── /characters  # Character management with Image Editor
+  │   └── /login       # Admin authentication
+  ├── /api           # API Routes
+  └── page.tsx       # Main Landing Page
+/components
+  ├── /ImageAdvancedEditor.tsx  # Custom Image Cropper Component
+  ├── /WaifuCard.tsx            # 3D Tilt Character Card
+  └── ...
+/data                # JSON based storage for simplicity
+/public
+  ├── /uploads       # Dynamically uploaded character images
+  └── ...
+```
 
-## 📝 Use It For Fun :3
+## 📝 License
+
+This project is created for educational and personal showcase purposes.
+
+---
+*Built with ❤️ by Kiritocroft*
