@@ -100,7 +100,11 @@ A beautiful, interactive personal showcase website built with **Next.js 16** and
   └── ...
 ```
 
-## 📝 License
+## � Credits
+
+- **Kaoruko Waguri 3D Model**: Special thanks to **nezunyann** for providing the amazing 3D character model used in this project.
+
+## �📝 License
 
 This project is created for educational and personal showcase purposes.
 
