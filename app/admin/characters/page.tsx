@@ -119,7 +119,7 @@ export default function AdminCharactersPage() {
       setEditingCharacter(null);
       setName("");
       setAnime("");
-      setType("Wholesome");
+      setType("Waifu");
       setDesc("");
       setRank("");
       setObjectPosition("center center");
@@ -306,7 +306,6 @@ export default function AdminCharactersPage() {
                   >
                     <option value="Waifu">Waifu</option>
                     <option value="Husbu">Husbu</option>
-                    <option value="Other">Other</option>
                   </select>
                 </div>
 

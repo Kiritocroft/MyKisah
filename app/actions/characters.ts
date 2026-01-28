@@ -67,7 +67,7 @@ import { z } from "zod";
 const CharacterSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
   anime: z.string().min(1, "Anime is required").max(100),
-  type: z.enum(["Waifu", "Husbu", "Other"]).default("Waifu"),
+  type: z.enum(["Waifu", "Husbu"]).default("Waifu"),
   desc: z.string().max(1000).optional(),
   rank: z.number().int().min(1).max(100).optional(),
   objectPosition: z.string().optional(),
