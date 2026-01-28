@@ -84,6 +84,8 @@ export async function saveCharacter(formData: FormData) {
         objectPosition: formData.get("objectPosition"),
     };
 
+    console.log("Processing Save Character:", JSON.stringify(rawData, null, 2));
+
     // Validate input using Zod
     const validatedData = CharacterSchema.parse(rawData);
 
