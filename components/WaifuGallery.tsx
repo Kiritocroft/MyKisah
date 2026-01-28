@@ -37,7 +37,7 @@ export default function WaifuGallery({ initialCharacters }: WaifuGalleryProps) {
   const rank2 = ranked.find(c => c.rank === 2);
   const rank3 = ranked.find(c => c.rank === 3);
 
-  const categories = ["All", "Waifu", "Husbu", "Other"];
+  const categories = ["All", "Waifu", "Husbu"];
 
   return (
     <section id="gallery" className="min-h-screen py-20 px-4 md:px-8 max-w-[1600px] mx-auto relative z-10">
