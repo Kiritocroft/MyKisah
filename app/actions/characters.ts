@@ -5,18 +5,20 @@ import path from "path";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 import { type Character } from "@/types";
+import { prisma } from "@/lib/prisma";
+import { supabase } from "@/lib/supabase";
 
-const DATA_FILE = path.join(process.cwd(), "data", "characters.json");
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "characters");
 
-async function ensureDataFile() {
-  try {
-    await fs.access(DATA_FILE);
-  } catch {
-    await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-    await fs.writeFile(DATA_FILE, "[]", "utf-8");
-  }
-}
+// Helper to check if string is a URL
+const isUrl = (str: string) => {
+    try {
+        new URL(str);
+        return true;
+    } catch {
+        return false;
+    }
+};
 
 async function ensureUploadDir() {
   try {
@@ -26,11 +28,33 @@ async function ensureUploadDir() {
   }
 }
 
+async function uploadToSupabase(file: File, filename: string) {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const { data, error } = await supabase.storage
+        .from('characters')
+        .upload(filename, buffer, {
+            contentType: file.type,
+            upsert: true
+        });
+
+    if (error) throw error;
+
+    const { data: { publicUrl } } = supabase.storage
+        .from('characters')
+        .getPublicUrl(filename);
+        
+    return publicUrl;
+}
+
 export async function getCharacters(): Promise<{ characters: Character[]; error?: string }> {
   try {
-    await ensureDataFile();
-    const data = await fs.readFile(DATA_FILE, "utf-8");
-    const characters = JSON.parse(data);
+    const characters = await prisma.character.findMany({
+      orderBy: {
+        rank: 'asc',
+      },
+    });
     return { characters };
   } catch (error) {
     console.error("Error reading characters:", error);
@@ -38,78 +62,116 @@ export async function getCharacters(): Promise<{ characters: Character[]; error?
   }
 }
 
+import { z } from "zod";
+
+const CharacterSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100),
+  anime: z.string().min(1, "Anime is required").max(100),
+  type: z.enum(["Waifu", "Husbu", "Other"]).default("Waifu"),
+  desc: z.string().max(1000).optional(),
+  rank: z.number().int().min(1).max(100).optional(),
+  objectPosition: z.string().optional(),
+});
+
 export async function saveCharacter(formData: FormData) {
   try {
-    await ensureDataFile();
-    await ensureUploadDir();
-    
-    const data = await fs.readFile(DATA_FILE, "utf-8");
-    let characters: Character[] = JSON.parse(data);
+    const rawData = {
+        name: formData.get("name"),
+        anime: formData.get("anime"),
+        type: formData.get("type"),
+        desc: formData.get("desc"),
+        rank: formData.get("rank") ? parseInt(formData.get("rank") as string) : undefined,
+        objectPosition: formData.get("objectPosition"),
+    };
+
+    // Validate input using Zod
+    const validatedData = CharacterSchema.parse(rawData);
 
     const id = formData.get("id") ? parseInt(formData.get("id") as string) : null;
-    const name = formData.get("name") as string;
-    const anime = formData.get("anime") as string;
-    const type = formData.get("type") as string;
-    const desc = formData.get("desc") as string;
-    const rank = formData.get("rank") ? parseInt(formData.get("rank") as string) : undefined;
-    const objectPosition = formData.get("objectPosition") as string || "center center";
     const imageFile = formData.get("image") as File | null;
     
     let imagePath = formData.get("existingImage") as string || "✿"; // Default fallback
 
     if (imageFile && imageFile.size > 0) {
-        const buffer = Buffer.from(await imageFile.arrayBuffer());
-        const filename = `${uuidv4()}${path.extname(imageFile.name)}`;
-        const filepath = path.join(UPLOAD_DIR, filename);
-        await fs.writeFile(filepath, buffer);
-        imagePath = `/uploads/characters/${filename}`;
+        // Validate file type and size
+        if (!imageFile.type.startsWith("image/")) {
+            throw new Error("Invalid file type. Only images are allowed.");
+        }
+        if (imageFile.size > 5 * 1024 * 1024) { // 5MB limit
+            throw new Error("File size too large. Max 5MB.");
+        }
+
+        // Try Supabase upload first
+        try {
+            const filename = `${uuidv4()}${path.extname(imageFile.name)}`;
+            imagePath = await uploadToSupabase(imageFile, filename);
+        } catch (storageError) {
+            console.error("Supabase storage upload failed, falling back to local:", storageError);
+            
+            // Fallback to local storage
+            await ensureUploadDir();
+            const buffer = Buffer.from(await imageFile.arrayBuffer());
+            const filename = `${uuidv4()}${path.extname(imageFile.name)}`;
+            const filepath = path.join(UPLOAD_DIR, filename);
+            await fs.writeFile(filepath, buffer);
+            imagePath = `/uploads/characters/${filename}`;
+        }
     }
 
     const characterData = {
-        name,
-        anime,
-        type,
-        desc,
+        ...validatedData,
+        desc: validatedData.desc || "", // Ensure desc is not undefined
         image: imagePath,
-        rank: rank || undefined,
-        objectPosition
+        rank: validatedData.rank || null,
+        objectPosition: validatedData.objectPosition || "center center",
     };
 
     let deletedOldImage = false;
 
     if (id) {
       // Check for old image deletion if we are updating and have a new image
-      const existingChar = characters.find(c => c.id === id);
+      const existingChar = await prisma.character.findUnique({ where: { id } });
+      
       if (existingChar && imageFile && imageFile.size > 0) {
-         // User is uploading a new image (e.g. cropped result)
-         // Check if old image is a local upload
-         if (existingChar.image && existingChar.image.startsWith("/uploads/characters/")) {
-             try {
-                 const oldFilePath = path.join(process.cwd(), "public", existingChar.image);
-                 // Verify file exists before deleting to avoid error spam
-                 try {
-                    await fs.access(oldFilePath);
-                    await fs.unlink(oldFilePath);
-                    console.log(`[File Deletion] Old image deleted successfully: ${existingChar.image} for Character ID: ${id}`);
-                    deletedOldImage = true;
-                 } catch (accessErr) {
-                    console.log(`[File Deletion] File not found or not accessible: ${existingChar.image}`);
+         // User is uploading a new image
+         if (existingChar.image) {
+             // If old image is on Supabase
+             if (isUrl(existingChar.image) && existingChar.image.includes('supabase.co')) {
+                 const oldPath = existingChar.image.split('/').pop();
+                 if (oldPath) {
+                    await supabase.storage.from('characters').remove([oldPath]);
                  }
-             } catch (e) {
-                 console.error(`[File Deletion Error] Failed to delete ${existingChar.image}:`, e);
+             }
+             // If old image is local
+             else if (existingChar.image.startsWith("/uploads/characters/")) {
+                 try {
+                     const oldFilePath = path.join(process.cwd(), "public", existingChar.image);
+                     try {
+                        await fs.access(oldFilePath);
+                        await fs.unlink(oldFilePath);
+                        deletedOldImage = true;
+                     } catch (accessErr) {
+                        console.log(`[File Deletion] File not found: ${existingChar.image}`);
+                     }
+                 } catch (e) {
+                     console.error(`[File Deletion Error] Failed to delete ${existingChar.image}:`, e);
+                 }
              }
          }
       }
 
       // Update existing
-      characters = characters.map((c) => (c.id === id ? { ...c, ...characterData, id } : c));
+      await prisma.character.update({
+        where: { id },
+        data: characterData,
+      });
     } else {
       // Create new
-      const newId = characters.length > 0 ? Math.max(...characters.map((c) => c.id)) + 1 : 1;
-      characters.push({ ...characterData, id: newId });
+      await prisma.character.create({
+        data: characterData,
+      });
     }
 
-    await fs.writeFile(DATA_FILE, JSON.stringify(characters, null, 2), "utf-8");
     revalidatePath("/");
     revalidatePath("/admin/characters");
     return { success: true, deletedOldImage };
@@ -121,24 +183,29 @@ export async function saveCharacter(formData: FormData) {
 
 export async function deleteCharacter(id: number) {
   try {
-    await ensureDataFile();
-    const data = await fs.readFile(DATA_FILE, "utf-8");
-    let characters: Character[] = JSON.parse(data);
+    const charToDelete = await prisma.character.findUnique({ where: { id } });
     
-    // Delete associated image if it's a local file
-    const charToDelete = characters.find(c => c.id === id);
-    if (charToDelete && charToDelete.image.startsWith("/uploads/")) {
-        try {
-            const filePath = path.join(process.cwd(), "public", charToDelete.image);
-            await fs.unlink(filePath);
-        } catch (e) {
-            console.error("Error deleting image file:", e);
+    if (charToDelete && charToDelete.image) {
+        // Delete from Supabase
+        if (isUrl(charToDelete.image) && charToDelete.image.includes('supabase.co')) {
+            const oldPath = charToDelete.image.split('/').pop();
+             if (oldPath) {
+                await supabase.storage.from('characters').remove([oldPath]);
+             }
+        }
+        // Delete from local
+        else if (charToDelete.image.startsWith("/uploads/")) {
+            try {
+                const filePath = path.join(process.cwd(), "public", charToDelete.image);
+                await fs.unlink(filePath);
+            } catch (e) {
+                console.error("Error deleting image file:", e);
+            }
         }
     }
 
-    characters = characters.filter((c) => c.id !== id);
+    await prisma.character.delete({ where: { id } });
     
-    await fs.writeFile(DATA_FILE, JSON.stringify(characters, null, 2), "utf-8");
     revalidatePath("/");
     revalidatePath("/admin/characters");
     return { success: true };

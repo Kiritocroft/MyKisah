@@ -5,6 +5,6 @@ export interface Character {
   type: string;
   desc: string;
   image: string;
-  rank?: number; // 1, 2, 3, or undefined/null
+  rank?: number | null; // 1, 2, 3, or undefined/null
   objectPosition?: string; // e.g. "50% 50%"
 }

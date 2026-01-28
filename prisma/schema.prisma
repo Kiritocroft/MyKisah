@@ -1,0 +1,21 @@
+datasource db {
+  provider  = "postgresql"
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+model Character {
+  id             Int      @id @default(autoincrement())
+  name           String
+  anime          String
+  type           String
+  desc           String
+  image          String
+  rank           Int?
+  objectPosition String   @default("center center")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
