@@ -1,10 +1,10 @@
-# My Kisah 🌸
+# 🌸 My Kisah
 
-A beautiful, interactive personal showcase website built with **Next.js 16** and **React 19**, featuring 3D elements, smooth animations, and a comprehensive admin management system with advanced image editing capabilities.
+**My Kisah** is an interactive and aesthetic personal showcase website, built using the latest modern web technologies. This project features charming 3D characters, a dynamic "waifu" gallery, and a comprehensive admin panel for content management.
+
+Crafted with love using **Next.js 16**, **React 19**, and **Tailwind CSS 4**, this website offers a seamless user experience with beautiful animations and high performance.
 
 ## 📸 Preview
-
-<!-- Ganti link gambar di bawah ini dengan URL screenshot aplikasi Anda -->
 
 <div align="center">
   <img src="https://i.imgur.com/NIMprFK.png" alt="Home Page" width="100%" />
@@ -20,93 +20,161 @@ A beautiful, interactive personal showcase website built with **Next.js 16** and
   <em>Waifu Gallery</em>
 </div>
 
-## ✨ Features
+## ✨ Key Features
 
 ### 🎨 Public Interface
-- **Interactive 3D Model**: Features a stunning 3D model with 360° rotation controls and interactions, powered by React Three Fiber.
-- **Hall of Fame**: A podium-style showcase for top-ranked characters with a symmetric, premium layout.
-- **Waifu Gallery**: A dynamic, filterable gallery of characters with categories like "Wholesome" and "Energetic".
-- **Immersive Design**: Dark mode aesthetic with floating sakura particles, glassmorphism effects, and custom typography.
-- **Smooth Animations**: Powered by Framer Motion for delightful page transitions and scroll reveals.
+- **Interactive 3D Character**: Interact with a lively 3D model (click for voice/text response), powered by *React Three Fiber*.
+- **Stunning Visual Effects**: Falling sakura particles, dynamic lighting effects, and smooth page transitions.
+- **Hall of Fame**: A special podium to showcase the top 3 characters (Rank 1-3) with a premium design.
+- **Waifu Gallery**: Explore the character collection with search and filter features (Waifu, Husbu, Others).
+- **Responsive**: Optimal viewing experience on both desktop and mobile devices.
 
 ### 🛠️ Admin Panel
-- **Secure Authentication**: Session-based login protection for administrative access.
-- **Character Management**: Full CRUD operations for the character gallery.
-- **Advanced Image Editor**: 
-  - Integrated cropping tool with zoom, rotation, and aspect ratio controls.
-  - **Auto-Cleanup**: Automatically deletes old, unused character images from the server to optimize storage.
-- **Real-time Feedback**: Toast notifications for actions like saving, deleting, and error handling.
-
-## 🚀 Tech Stack
-
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **Core**: [React 19](https://react.dev/)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **3D Graphics**: [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) & [Drei](https://github.com/pmndrs/drei)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Image Processing**: [React Easy Crop](https://github.com/ricardo-ch/react-easy-crop)
-- **Icons**: [Lucide React](https://lucide.dev/)
-
-## 🛠️ Getting Started
-
-### Prerequisites
-- Node.js (v18 or higher recommended) installed on your machine.
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Kiritocroft/MyKisah.git
-   cd my-kisah
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Environment Setup**
-   Create a `.env` file in the root directory to set your admin password:
-   ```env
-   ADMIN_PASSWORD=your_secure_password_here
-   ```
-
-4. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Open the application**
-   - Public site: [http://localhost:3000](http://localhost:3000)
-   - Admin panel: [http://localhost:3000/admin](http://localhost:3000/admin)
-
-## 📂 Project Structure
-
-```
-/app
-  ├── /actions       # Server Actions for Auth and Data mutations
-  ├── /admin         # Protected Admin panel routes
-  │   ├── /characters  # Character management with Image Editor
-  │   └── /login       # Admin authentication
-  ├── /api           # API Routes
-  └── page.tsx       # Main Landing Page
-/components
-  ├── /ImageAdvancedEditor.tsx  # Custom Image Cropper Component
-  ├── /WaifuCard.tsx            # 3D Tilt Character Card
-  └── ...
-/data                # JSON based storage for simplicity
-/public
-  ├── /uploads       # Dynamically uploaded character images
-  └── ...
-```
-
-## � Credits
-
-- **Kaoruko Waguri 3D Model**: Special thanks to **nezunyann** for providing the amazing 3D character model used in this project.
-
-## �📝 License
-
-This project is created for educational and personal showcase purposes.
+- **Character Management (CRUD)**: Easily add, edit, and delete characters.
+- **Integrated Image Upload**: Upload images directly to **Supabase Storage** with local *fallback* support.
+- **Security**: Admin login secured with *JWT Session* and *Middleware*.
+- **Modern Database**: Utilizes **Supabase (PostgreSQL)** and **Prisma ORM** for reliable data management.
 
 ---
-*Built with ❤️ by Kiritocroft*
+
+## 📋 Prerequisites
+
+Before starting, ensure your computer has the following installed:
+
+1.  **Node.js**: Version 18 or newer (v20+ recommended). [Download here](https://nodejs.org/).
+2.  **Git**: For source code management. [Download here](https://git-scm.com/).
+3.  **Supabase Account**: For free database and image storage. [Sign up here](https://supabase.com/).
+
+---
+
+## 🚀 Installation Guide (Step-by-Step)
+
+Follow these steps to run the project on your local machine:
+
+### 1. Clone Repository
+Open your terminal (Command Prompt/PowerShell) and run the following command:
+
+```bash
+git clone https://github.com/Kiritocroft/MyKisah.git
+cd MyKisah
+```
+
+### 2. Install Dependencies
+Install all required project libraries:
+
+```bash
+npm install
+```
+
+### 3. Environment Configuration (.env)
+Copy the example configuration file and create a new `.env` file:
+
+```bash
+cp .env.example .env
+# Or on Windows (PowerShell):
+# copy .env.example .env
+```
+
+Open the newly created `.env` file with your text editor and fill in the values:
+
+-   `ADMIN_PASSWORD`: Password for admin panel login.
+-   `DATABASE_URL`: Supabase database connection string (Transaction Mode - Port 6543).
+-   `DIRECT_URL`: Supabase database connection string (Session Mode - Port 5432).
+-   `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase Project URL.
+-   `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase public API key.
+-   `SUPABASE_JWT_SECRET`: JWT secret key from Supabase API settings.
+
+> **Tip:** You can get the database details and API keys in the Supabase dashboard under **Settings > Database** and **Settings > API**.
+
+### 4. Database Setup
+Run migrations to create tables in your Supabase database:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+(Optional) Populate the database with initial data (seeding):
+
+```bash
+npm run seed
+# or
+npx tsx prisma/seed.ts
+```
+
+### 5. Run Application
+Start the local development server:
+
+```bash
+npm run dev
+```
+
+Open your browser and access:
+-   **Home Page**: [http://localhost:3000](http://localhost:3000)
+-   **Admin Panel**: [http://localhost:3000/admin](http://localhost:3000/admin)
+
+---
+
+## 📂 Directory Structure
+
+Here is a brief overview of the project folder structure:
+
+```
+MyKisah/
+├── app/                  # Main Next.js App Router folder
+│   ├── actions/          # Server Actions (backend logic)
+│   ├── admin/            # Admin specific pages
+│   ├── api/              # API Routes
+│   └── page.tsx          # Home Page
+├── components/           # React UI Components (Buttons, Cards, 3D Scene, etc.)
+├── lib/                  # Configuration utilities (Prisma, Supabase)
+├── prisma/               # Database Schema and Seed Scripts
+├── public/               # Static files (Images, 3D Models)
+└── types/                # TypeScript type definitions
+```
+
+---
+
+## 🔧 Production Mode
+
+To run the application in production mode (faster and more stable):
+
+1.  **Build the application**:
+    ```bash
+    npm run build
+    ```
+
+2.  **Start the server**:
+    ```bash
+    npm start
+    ```
+
+The application will run at [http://localhost:3000](http://localhost:3000) with optimal performance.
+
+---
+
+## 🤝 How to Contribute
+
+We are very open to contributions! If you want to add features or fix bugs:
+
+1.  **Fork** this repository.
+2.  Create a new **Branch** (`git checkout -b your-cool-feature`).
+3.  Make changes and **Commit** (`git commit -m 'Add cool feature'`).
+4.  **Push** to your branch (`git push origin your-cool-feature`).
+5.  Create a **Pull Request** on GitHub.
+
+---
+
+## ❓ FAQ (Frequently Asked Questions)
+
+**Q: Why can't I login to admin?**
+A: Ensure you have set `ADMIN_PASSWORD` in the `.env` file and `SUPABASE_JWT_SECRET` matches the one in the Supabase dashboard.
+
+**Q: Images are not showing after upload?**
+A: Ensure a Storage Bucket named `characters` has been created in Supabase and its status is **Public**. Also check the *Policy* (RLS) in Storage to allow *Select*, *Insert*, *Update*, and *Delete*.
+
+**Q: How to change the 3D model?**
+A: Replace the `.glb` file in the `public/models/` folder and adjust the file reference in the `components/KaorukoModel.tsx` component.
+
+---
+
+Made with ❤️ by [Kiritocroft](https://github.com/Kiritocroft)
