@@ -19,7 +19,7 @@ export default function AdminCharactersPage() {
   // Form states
   const [name, setName] = useState("");
   const [anime, setAnime] = useState("");
-  const [type, setType] = useState("Wholesome");
+  const [type, setType] = useState("Waifu");
   const [desc, setDesc] = useState("");
   const [rank, setRank] = useState<string>(""); // "" means no rank
   const [objectPosition, setObjectPosition] = useState("center center");
@@ -304,10 +304,9 @@ export default function AdminCharactersPage() {
                     onChange={(e) => setType(e.target.value)}
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-soft-pink"
                   >
-                    <option value="Wholesome">Wholesome</option>
-                    <option value="Energetic">Energetic</option>
-                    <option value="Cool">Cool</option>
-                    <option value="Introvert">Introvert</option>
+                    <option value="Waifu">Waifu</option>
+                    <option value="Husbu">Husbu</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
 
